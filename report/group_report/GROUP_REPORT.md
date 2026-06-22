@@ -1,13 +1,6 @@
 # Group Report: Lab 3 — Trợ lý ảo Vinmec (ReAct Agent)
 
-- **Team Name**: Nhóm 14
-- **Team Members**: 
-
-+ Huỳnh An Nghiệp - 2A202600853
-+ Vũ Minh Duy - 2A202600806
-+ Đỗ Thị Huyền - 2A202600880
-+ Phùng Bá Quân - 2A202600866
-+ Nguyễn Hoàng Long - 2A202600785
+- **Author**: Nguyễn Hoàng Long - 2A202600785
 
 - **Deployment Date**: 2026-06-01
 
@@ -15,7 +8,7 @@
 
 ## 1. Executive Summary
 
-Nhóm xây dựng **trợ lý ảo bệnh viện Vinmec** dựa trên **ReAct Agent viết tay** (chu trình Thought → Action → Observation), chạy trên **Gemini 2.5 Flash** (kèm hỗ trợ OpenAI GPT-4o và Phi-3 local qua interface `LLMProvider`). Hệ thống có 8 công cụ, telemetry đầy đủ, và một web demo (Flask).
+Dự án xây dựng **trợ lý ảo bệnh viện Vinmec** dựa trên **ReAct Agent viết tay** (chu trình Thought → Action → Observation), chạy trên **Gemini 2.5 Flash** (kèm hỗ trợ OpenAI GPT-4o và Llama 3.1 8B local qua Ollama, sử dụng interface `LLMProvider`). Hệ thống có 8 công cụ, telemetry đầy đủ, và một web demo (Flask).
 
 - **Success Rate**: **16/16 (100%)** trên bộ test phân cấp (Dễ → Rất khó).
 - **Key Outcome**: Agent xâu chuỗi tin cậy 3–4 tool cho các tác vụ nhiều bước (định vị → tra lịch → tra giá → bảo hiểm → đặt lịch), xử lý **cấp cứu**, **bộ nhớ hội thoại** và **từ chối ngoài phạm vi** — những việc một chatbot thuần không làm được (sẽ "bịa" giá/địa điểm).
@@ -61,7 +54,7 @@ Dữ liệu tách riêng tại [`vinmec_data.json`](../../src/tools/vinmec_data.
 
 ### 2.3 LLM Providers Used
 - **Primary**: Gemini 2.5 Flash (`gemini-2.5-flash`).
-- **Hỗ trợ**: OpenAI GPT-4o, Phi-3-mini local (GGUF/CPU) — chuyển đổi qua `.env` (`DEFAULT_PROVIDER`).
+- **Hỗ trợ**: OpenAI GPT-4o, OpenRouter, Llama 3.1 8B local (qua Ollama) — chuyển đổi qua `.env` (`DEFAULT_PROVIDER`).
 
 ---
 

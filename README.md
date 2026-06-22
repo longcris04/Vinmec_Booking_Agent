@@ -1,56 +1,218 @@
-# Lab 3: Chatbot vs ReAct Agent (Industry Edition)
+# Vinmec ReAct Agent
 
-Welcome to Phase 3 of the Agentic AI course! This lab focuses on moving from a simple LLM Chatbot to a sophisticated **ReAct Agent** with industry-standard monitoring.
+Trợ lý ảo bệnh viện **Vinmec** xây dựng trên **ReAct Agent viết tay** (Thought → Action → Observation). Agent gọi tool để lấy dữ liệu thật thay vì "bịa" câu trả lời như chatbot thông thường.
 
-## 🚀 Getting Started
+**Tác giả:** Nguyễn Hoàng Long — 2A202600785
 
-### 1. Setup Environment
-Copy the `.env.example` to `.env` and fill in your API keys:
+---
+
+## Tính năng
+
+- Tra giá dịch vụ khám và ước tính chi phí sau bảo hiểm
+- Tìm cơ sở Vinmec gần nhất + chỉ đường Google Maps
+- Kiểm tra lịch bác sĩ theo chuyên khoa và đặt lịch hẹn
+- Suy luận chuyên khoa từ triệu chứng người dùng mô tả
+- Hỗ trợ cấp cứu: gọi 115, hướng dẫn sơ cứu tức thì
+- Từ chối câu hỏi ngoài phạm vi y tế (guardrail)
+- Web demo (Flask) với trace ReAct, card bản đồ, card cấp cứu
+
+---
+
+## Yêu cầu
+
+- Python **3.10+**
+- (Tuỳ chọn) [Ollama](https://ollama.com) nếu chạy local LLM
+
+---
+
+## Cài đặt
+
+```bash
+# 1. Clone repo
+git clone <repo-url>
+cd Vinmec_Booking_Agent
+
+# 2. Tạo virtual environment (khuyến nghị)
+python -m venv .venv
+# Windows
+.venv\Scripts\activate
+# macOS/Linux
+source .venv/bin/activate
+
+# 3. Cài thư viện
+pip install -r requirements.txt
+```
+
+---
+
+## Cấu hình môi trường
+
+Sao chép file mẫu rồi điền API key:
+
 ```bash
 cp .env.example .env
 ```
 
-### 2. Install Dependencies
-```bash
-pip install -r requirements.txt
-```
+Nội dung `.env`:
 
-### 3. Directory Structure
-- `src/tools/`: Extension point for your custom tools.
-
-## 🏠 Running with Local Models (CPU)
-
-If you don't want to use OpenAI or Gemini, you can run open-source models (like Phi-3) directly on your CPU using `llama-cpp-python`.
-
-### 1. Download the Model
-Download the **Phi-3-mini-4k-instruct-q4.gguf** (approx 2.2GB) from Hugging Face:
-- [Phi-3-mini-4k-instruct-GGUF](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct-gguf)
-- Direct Download: [phi-3-mini-4k-instruct-q4.gguf](https://huggingface.co/microsoft/Phi-3-mini-4k-instruct-gguf/resolve/main/Phi-3-mini-4k-instruct-q4.gguf)
-
-### 2. Place Model in Project
-Create a `models/` folder in the root and move the downloaded `.gguf` file there.
-
-### 3. Update `.env`
-Change your `DEFAULT_PROVIDER` and set the path:
 ```env
-DEFAULT_PROVIDER=local
-LOCAL_MODEL_PATH=./models/Phi-3-mini-4k-instruct-q4.gguf
+# Chọn provider: openai | google | openrouter | local
+DEFAULT_PROVIDER=openrouter
+
+# Google Gemini
+GEMINI_API_KEY=your_gemini_api_key
+GEMINI_MODEL=gemini-2.5-flash
+
+# OpenAI
+OPENAI_API_KEY=your_openai_api_key
+DEFAULT_MODEL=gpt-4o
+
+# OpenRouter (nhiều model, 1 API key)
+OPENROUTER_API_KEY=your_openrouter_api_key
+OPENROUTER_MODEL=google/gemini-3.1-flash-lite
+
+# Local LLM via Ollama
+OLLAMA_MODEL=llama3.1:8b
+OLLAMA_BASE_URL=http://localhost:11434
 ```
 
-## 🎯 Lab Objectives
-
-1.  **Baseline Chatbot**: Observe the limitations of a standard LLM when faced with multi-step reasoning.
-2.  **ReAct Loop**: Implement the `Thought-Action-Observation` cycle in `src/agent/agent.py`.
-3.  **Provider Switching**: Swap between OpenAI and Gemini seamlessly using the `LLMProvider` interface.
-4.  **Failure Analysis**: Use the structured logs in `logs/` to identify why the agent fails (hallucinations, parsing errors).
-5.  **Grading & Bonus**: Follow the [SCORING.md](file:///Users/tindt/personal/ai-thuc-chien/day03-lab-agent/SCORING.md) to maximize your points and explore bonus metrics.
-
-## 🛠️ How to Use This Baseline
-The code is designed as a **Production Prototype**. It includes:
-- **Telemetry**: Every action is logged in JSON format for later analysis.
-- **Robust Provider Pattern**: Easily extendable to any LLM API.
-- **Clean Skeletons**: Focus on the logic that matters—the agent's reasoning process.
+> Chỉ cần điền key của provider bạn chọn dùng.
 
 ---
 
-*Happy Coding! Let's build agents that actually work.*
+## Chạy ứng dụng
+
+### CLI (terminal)
+
+```bash
+python main.py
+```
+
+Nhập câu hỏi hoặc nhấn Enter để dùng câu mẫu mặc định.
+
+### Web Demo (Flask)
+
+```bash
+python app.py
+```
+
+Mở trình duyệt tại **http://localhost:5000**
+
+Giao diện web hỗ trợ:
+- Chat realtime với agent
+- Tự động xin vị trí GPS từ trình duyệt
+- Hiển thị trace ReAct (Thought / Action / Observation)
+- Card chỉ đường Google Maps
+- Card cấp cứu với hướng dẫn sơ cứu
+- Metrics mỗi lượt: số bước, token, latency, cost
+
+---
+
+## Chạy với Local LLM (Ollama)
+
+```bash
+# 1. Cài Ollama: https://ollama.com/download
+
+# 2. Pull model
+ollama pull llama3.1:8b
+
+# 3. Đặt provider trong .env
+DEFAULT_PROVIDER=local
+
+# 4. Chạy bình thường
+python main.py
+# hoặc
+python app.py
+```
+
+> Llama 3.1 8B yêu cầu ~5 GB RAM. Ollama tự chạy service khi khởi động Windows.
+
+---
+
+## Chạy test
+
+```bash
+# Bộ 16 test case chính (Dễ → Rất khó)
+python tests/test_case.py
+
+# Test riêng Ollama provider
+python tests/test_local.py
+```
+
+Kết quả mẫu:
+
+```
+=== KIỂM THỬ 16 CASE | model: google/gemini-3.1-flash-lite ===
+
+[L1-01 | 1-Dễ      | PASS ✅] Tra giá 1 dịch vụ
+[L2-02 | 2-TB      | PASS ✅] Giá + bảo hiểm (Vinmec Care -70%)
+[L3-01 | 3-Khó     | PASS ✅] Tìm cơ sở gần nhất (định vị)
+[L4-03 | 4-Rất khó | PASS ✅] Cấp cứu đau ngực: 115 + sơ cứu
+...
+
+================================================================
+  TỔNG    : 16/16 (100%)
+  Token   : 100524 | Latency TB: 1643 ms | Cost: $1.0052
+================================================================
+```
+
+---
+
+## Cấu trúc thư mục
+
+```
+Vinmec_Booking_Agent/
+├── main.py                         # CLI entry point
+├── app.py                          # Web demo (Flask)
+├── requirements.txt
+├── .env.example
+│
+├── src/
+│   ├── agent/agent.py              # ReActAgent — vòng lặp ReAct
+│   ├── core/
+│   │   ├── llm_provider.py         # Abstract base class
+│   │   ├── openai_provider.py
+│   │   ├── gemini_provider.py
+│   │   ├── openrouter_provider.py
+│   │   └── local_provider.py       # Ollama provider
+│   ├── tools/
+│   │   ├── vinmec_tools.py         # 8 tool definitions
+│   │   └── vinmec_data.json        # Dữ liệu mock (cơ sở, giá, lịch, sơ cứu)
+│   └── telemetry/
+│       ├── logger.py               # Structured JSON logging
+│       └── metrics.py              # Token / latency / cost tracking
+│
+├── templates/index.html            # Web chat UI
+├── tests/
+│   ├── test_case.py                # 16 test cases phân cấp
+│   └── test_local.py               # Test Ollama provider
+└── report/
+    └── individual_reports/
+        └── REPORT_Nguyen_Hoang_Long_2A202600785.md
+```
+
+---
+
+## Các provider được hỗ trợ
+
+| `DEFAULT_PROVIDER` | Model mặc định | Yêu cầu |
+|---|---|---|
+| `google` | `gemini-2.5-flash` | `GEMINI_API_KEY` |
+| `openrouter` | `google/gemini-3.1-flash-lite` | `OPENROUTER_API_KEY` |
+| `openai` | `gpt-4o` | `OPENAI_API_KEY` |
+| `local` | `llama3.1:8b` | Ollama đang chạy |
+
+---
+
+## 8 Tools của Agent
+
+| Tool | Chức năng |
+|---|---|
+| `get_current_location` | Định vị người dùng (GPS → IP → fallback) |
+| `find_nearest_vinmec` | Cơ sở Vinmec gần nhất (Haversine) |
+| `get_service_price` | Giá dịch vụ khám |
+| `apply_insurance` | Tính chi phí sau bảo hiểm |
+| `check_doctor_availability` | Kiểm tra lịch bác sĩ |
+| `book_appointment` | Đặt lịch + sinh mã xác nhận |
+| `get_emergency_contact` | Số cấp cứu 115 + cơ sở gần nhất |
+| `get_first_aid` | Hướng dẫn sơ cứu theo tình trạng |

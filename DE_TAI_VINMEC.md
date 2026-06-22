@@ -9,12 +9,18 @@
 
 Đây là **Lab 3** của môn Agentic AI: xây dựng một **ReAct Agent** (Reasoning + Acting) thay cho chatbot LLM thông thường, có **telemetry/monitoring** theo chuẩn công nghiệp.
 
+**Tác giả:** Nguyễn Hoàng Long — 2A202600785
+
 **Sản phẩm:** Trợ lý ảo của bệnh viện **Vinmec** giúp người dùng:
 - Tra lịch trống của bác sĩ theo chuyên khoa.
-- Tra giá dịch vụ khám.
-- Ước tính số tiền phải trả sau khi áp bảo hiểm.
+- Tra giá dịch vụ khám và ước tính chi phí sau bảo hiểm.
+- Tìm cơ sở Vinmec gần nhất và chỉ đường.
+- Đặt lịch hẹn và nhận mã xác nhận.
+- Hỗ trợ khẩn cấp: gọi 115, hướng dẫn sơ cứu theo tình trạng.
 
 **Insight cốt lõi cần chứng minh:** Chatbot thường giỏi *nói chuyện* nhưng *bịa số* ở bài toán nhiều bước. ReAct Agent gọi **tool** để lấy dữ liệu thật → trả lời chính xác. Bài lab phải cho thấy rõ sự khác biệt này.
+
+**Trạng thái:** ✅ Hoàn thành — **16/16 test case (100%)** trên bộ kiểm thử phân cấp Dễ → Rất khó.
 
 ---
 
@@ -30,73 +36,100 @@ Observation: <kết quả tool do CODE chèn vào, không phải LLM tự bịa>
 Final Answer: câu trả lời cuối cho người dùng
 ```
 
-**Quy ước Action thống nhất toàn nhóm:** `Action: tool_name(arg1=..., arg2=...)`
+**Quy ước Action:** `Action: tool_name(arg1=..., arg2=...)`
+
+**Cơ chế chống lỗi đã triển khai:**
+- **CONTINUE_CUE** (`Thought:`): mồi LLM tiếp tục thay vì restart.
+- **`_truncate()`**: cắt output tại `Observation:`/`User:`/`Question:` để chống LLM tự bịa lượt hội thoại.
+- **Salvage**: nếu output không có `Action:` nhưng có nội dung → coi là `Final Answer`.
+- **Bộ nhớ hội thoại**: `_build_transcript` / `_remember` giúp giữ ngữ cảnh đa lượt.
+- **`max_steps = 8`**: giới hạn an toàn.
 
 ---
 
-## 3. Bộ công cụ (Tools) — 4 tool lõi
+## 3. Bộ công cụ (Tools) — 8 tools
 
-Tất cả tool là **hàm Python với dữ liệu mock**, trả về **observation NGẮN GỌN** (số hoặc 1 dòng).
+Tất cả tool là **hàm Python với dữ liệu mock** từ `src/tools/vinmec_data.json`, trả về observation ngắn gọn.
 
-| Tool | Input | Output (mock) |
+| Tool | Input | Use Case |
 | :--- | :--- | :--- |
-| `find_nearest_vinmec(location)` | địa điểm/quận của người dùng | Cơ sở Vinmec gần nhất + khoảng cách |
-| `check_doctor_availability(specialty, date)` | chuyên khoa, ngày | Khung giờ trống + tên bác sĩ |
-| `get_service_price(service_name)` | tên dịch vụ | Giá dịch vụ (VND) |
-| `apply_insurance(price, insurance_type)` | giá gốc, loại BH | Số tiền phải trả sau bảo hiểm |
+| `get_current_location` | — | Định vị người dùng (GPS trình duyệt → IP → fallback) |
+| `find_nearest_vinmec` | lat, lon | Cơ sở Vinmec gần nhất (Haversine) + link Google Maps |
+| `get_service_price` | service_name | Giá dịch vụ khám (VND) |
+| `apply_insurance` | price, insurance_type | Số tiền phải trả sau bảo hiểm |
+| `check_doctor_availability` | specialty, date | Lịch bác sĩ (lọc theo quy tắc đặt trước ≥ 30 phút) |
+| `book_appointment` | specialty, time, doctor | Xác nhận đặt lịch + sinh mã VM##### |
+| `get_emergency_contact` | lat, lon | Số cấp cứu 115 + cơ sở Vinmec gần nhất |
+| `get_first_aid` | condition | Hướng dẫn sơ cứu theo tình trạng (đau ngực, đột quỵ, co giật…) |
 
-**Dữ liệu mock gợi ý:**
-- Cơ sở Vinmec: `Times City (Hà Nội)`, `Central Park (TP.HCM)`, `Đà Nẵng`, `Nha Trang`, `Hạ Long`. Map quận/thành phố → cơ sở gần nhất + khoảng cách (km).
-- Chuyên khoa: `Tim mạch`, `Da liễu`, `Nhi`, `Thần kinh`.
-- Bảo hiểm: `Vinmec Care` (giảm 70%), `Bảo Việt` (giảm 50%), `Không` (0%).
-- Giá: Khám Tim mạch 500.000đ, Da liễu 300.000đ, Nhi 250.000đ...
-
-**(Bonus)** Tool thứ 5: `book_appointment(specialty, time)` → xác nhận đặt lịch.
+**Dữ liệu mock** (tất cả trong `src/tools/vinmec_data.json`):
+- **Cơ sở:** Times City (HN), Central Park (HCM), Đà Nẵng, Nha Trang, Hạ Long, Phú Quốc.
+- **Bảo hiểm:** `Vinmec Care` (−70%), `Bảo Việt` (−50%), `Không` (0%).
+- **Giá khám:** Tim mạch 500k, Da liễu 300k, Nhi 250k, Tiêu hóa 400k, Chấn thương chỉnh hình 350k…
+- **Alias chuyên khoa:** "xương khớp" → Chấn thương chỉnh hình, "bụng" → Tiêu hóa…
 
 ---
 
-## 4. Test case lõi (bắt buộc chạy được)
+## 4. Bộ test case (16 case — phân cấp)
 
-> *"Tôi ở Cầu Giấy, muốn khám Tim mạch tuần này ở Vinmec gần nhất, dùng gói Vinmec Care, tổng tiền tôi phải trả là bao nhiêu?"*
+| Level | Mô tả | Kết quả |
+| :--- | :--- | :--- |
+| L1 — Dễ (3 case) | Tra giá 1 dịch vụ, tra lịch đơn | **3/3 ✅** |
+| L2 — Trung bình (3 case) | Giá + bảo hiểm, edge case khoa không tồn tại | **3/3 ✅** |
+| L3 — Khó (5 case) | Định vị, suy ra chuyên khoa từ triệu chứng, guardrail ngoài phạm vi | **5/5 ✅** |
+| L4 — Rất khó (5 case) | Hội thoại đa lượt, bộ nhớ context, cấp cứu + sơ cứu | **5/5 ✅** |
+| **Tổng** | | **16/16 (100%) ✅** |
 
-Chuỗi mong đợi của agent:
-1. `find_nearest_vinmec("Cầu Giấy")` → Vinmec Times City, cách 5km.
-2. `check_doctor_availability("Tim mạch", "tuần này")` → có lịch trống.
-3. `get_service_price("Khám Tim mạch")` → 500.000đ.
-4. `apply_insurance(500000, "Vinmec Care")` → 150.000đ.
-5. `Final Answer`: cơ sở gần nhất là Times City, còn lịch ngày X, chi phí sau bảo hiểm là **150.000đ**.
-
-> ⚠️ Với Phi-3 (4K context, `max_steps=3`), test 4 tool có thể tràn bước — dùng test case 3 tool (bỏ `find_nearest`) cho model local, và test 4 tool cho gpt-4o/gemini.
+**Telemetry thực tế** (OpenRouter — `google/gemini-3.1-flash-lite`):
+- Token tiêu thụ: ~100,500 tokens / cả suite.
+- Latency trung bình: ~1,640 ms / lần gọi LLM.
+- Chi phí ước tính: ~$1.00 / cả suite.
 
 ---
 
 ## 5. Kiến trúc & cấu trúc thư mục
 
 ```
-src/
-├── agent/agent.py          # ReActAgent: vòng lặp Thought-Action-Observation (CẦN HOÀN THIỆN)
-├── core/                   # ĐÃ XONG: các LLM provider
-│   ├── llm_provider.py     #   - interface trừu tượng
-│   ├── openai_provider.py  #   - gpt-4o
-│   ├── gemini_provider.py  #   - gemini-1.5-flash
-│   └── local_provider.py   #   - Phi-3-mini (GGUF, chạy CPU)
-├── telemetry/
-│   ├── logger.py           # ĐÃ XONG: log JSON ra logs/
-│   └── metrics.py          # CẦN HOÀN THIỆN: _calculate_cost()
-└── tools/                  # CẦN TẠO MỚI: vinmec_tools.py
-
-# File cần tạo thêm: main.py, chatbot.py, analyze_logs.py, tests/test_cases.py
+Vinmec_Booking_Agent/
+├── main.py                         # CLI entry point
+├── app.py                          # Web demo (Flask) — http://localhost:5000
+├── requirements.txt
+├── .env / .env.example
+│
+├── src/
+│   ├── agent/agent.py              # ReActAgent: vòng lặp ReAct hoàn chỉnh
+│   ├── core/
+│   │   ├── llm_provider.py         # Abstract base class
+│   │   ├── openai_provider.py      # GPT-4o
+│   │   ├── gemini_provider.py      # Gemini 2.5 Flash
+│   │   ├── openrouter_provider.py  # OpenRouter (nhiều model)
+│   │   └── local_provider.py       # Llama 3.1 8B via Ollama
+│   ├── tools/
+│   │   ├── vinmec_tools.py         # 8 tool definitions
+│   │   └── vinmec_data.json        # Toàn bộ dữ liệu mock
+│   └── telemetry/
+│       ├── logger.py               # Structured JSON logging
+│       └── metrics.py              # PerformanceTracker (token/latency/cost)
+│
+├── templates/index.html            # Web chat UI (dùng với app.py)
+├── tests/
+│   ├── test_case.py                # Bộ 16 test case chính
+│   └── test_local.py               # Test riêng Ollama provider
+└── report/
+    └── individual_reports/
+        └── REPORT_Nguyen_Hoang_Long_2A202600785.md
 ```
 
 ---
 
-## 6. Ràng buộc kỹ thuật (RẤT QUAN TRỌNG khi vibe code)
+## 6. Ràng buộc kỹ thuật
 
-1. **Context window nhỏ:** Model local Phi-3-mini chỉ có **4.096 token**. Vì vòng lặp ReAct tích lũy lịch sử → **observation phải ngắn**, `max_steps = 3`. Nếu không, agent tràn context → lặp vô hạn.
-2. **Chống bịa Observation:** LLM phải DỪNG trước khi tự sinh `Observation:`. Provider local đã có sẵn `stop=["Observation:"]` — code mới là nơi thực thi tool và chèn observation thật.
-3. **Parser bền vững:** LLM hay xuất markdown ```` ```json ... ``` ````, thừa khoảng trắng, hoặc sai format. Parser (regex) phải xử lý các trường hợp này.
-4. **Provider switching:** đọc `DEFAULT_PROVIDER` từ `.env` (`openai` | `google` | `local`) để chọn model.
-5. **Telemetry:** mọi lần gọi LLM ghi log qua `tracker.track_request()` để phân tích token/latency/cost.
+1. **Chống bịa Observation:** LLM phải DỪNG trước khi tự sinh `Observation:`. Vòng lặp agent dùng `_truncate()` để cắt phần bịa, kết hợp `stop` tokens ở provider.
+2. **Parser bền vững:** Dùng AST (`ast.parse`) thay vì regex để parse `tool(arg=value)` — an toàn hơn với các format LLM trả về.
+3. **Provider switching:** Đọc `DEFAULT_PROVIDER` từ `.env` (`openai` | `google` | `openrouter` | `local`).
+4. **Telemetry:** Mọi lần gọi LLM ghi qua `tracker.track_request()` — token, latency, cost estimate.
+5. **Rate limiting (web):** ≤15 tin/phút, ≥2s/tin theo IP; độ dài tin nhắn ≤500 ký tự.
+6. **Guardrail y tế:** Câu hỏi ngoài phạm vi bị từ chối; tình huống cấp cứu được ưu tiên xử lý ngay (115 + sơ cứu) trước khi tư vấn đặt lịch.
 
 ---
 
@@ -104,22 +137,33 @@ src/
 
 | Provider | Model | Khi nào dùng |
 | :--- | :--- | :--- |
-| `openai` | `gpt-4o` | Mặc định, demo "agent chạy ngon" |
-| `google` | `gemini-1.5-flash` | Backup, so sánh latency |
-| `local` | `Phi-3-mini-4k-instruct-q4.gguf` | Offline/CPU, dễ tạo trace lỗi để phân tích |
+| `google` | `gemini-2.5-flash` | Primary — chất lượng cao, có quota miễn phí |
+| `openrouter` | `google/gemini-3.1-flash-lite` (mặc định) | Linh hoạt — đổi model qua `OPENROUTER_MODEL` |
+| `openai` | `gpt-4o` | Backup, so sánh chất lượng |
+| `local` | `llama3.1:8b` via Ollama | Offline/không tốn API cost |
 
-Cấu hình ở `.env` (copy từ `.env.example`).
+**Cấu hình `.env`:**
+```env
+DEFAULT_PROVIDER=openrouter        # openai | google | openrouter | local
+GEMINI_API_KEY=...
+OPENAI_API_KEY=...
+OPENROUTER_API_KEY=...
+OPENROUTER_MODEL=google/gemini-3.1-flash-lite
+OLLAMA_MODEL=llama3.1:8b           # dùng khi DEFAULT_PROVIDER=local
+OLLAMA_BASE_URL=http://localhost:11434
+```
+
+**Chạy local LLM (Ollama):**
+```bash
+ollama pull llama3.1:8b
+# Đặt DEFAULT_PROVIDER=local trong .env
+python main.py
+```
 
 ---
 
 ## 8. Tiêu chí chấm điểm (tham chiếu SCORING.md)
 
-- **Nhóm (max 60đ):** Chatbot baseline, Agent v1, Agent v2 (cải tiến), tool design, chất lượng trace, đánh giá, flowchart, code quality.
-- **Cá nhân (40đ):** đóng góp kỹ thuật, debugging case study từ log, insight chatbot vs agent, đề xuất tương lai.
+- **Kỹ thuật:** Chatbot baseline → Agent v1 → Agent v2 (cải tiến), tool design, chất lượng trace, đánh giá, code quality.
+- **Cá nhân (40đ):** Đóng góp kỹ thuật (telemetry), debugging case study từ log, insight chatbot vs agent, đề xuất tương lai.
 - **Triết lý:** *"Fail Early, Learn Fast"* — một trace lỗi được phân tích kỹ giá trị hơn một hệ thống "hoàn hảo" không giải thích được.
-
----
-
-## 9. Phân công
-
-Xem chi tiết task list của 5 thành viên tại **[TASK_LIST.md](TASK_LIST.md)**.

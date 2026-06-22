@@ -97,17 +97,8 @@ TEST_CASES = [
 
 # ---------------------------------------------------------------------------
 def get_provider():
-    provider = os.getenv("DEFAULT_PROVIDER", "google").lower()
-    if provider == "openai":
-        from src.core.openai_provider import OpenAIProvider
-        return OpenAIProvider(os.getenv("DEFAULT_MODEL", "gpt-4o"), os.getenv("OPENAI_API_KEY"))
-    if provider == "google":
-        from src.core.gemini_provider import GeminiProvider
-        return GeminiProvider(os.getenv("GEMINI_MODEL", "gemini-2.5-flash"), os.getenv("GEMINI_API_KEY"))
-    if provider == "local":
-        from src.core.local_provider import LocalProvider
-        return LocalProvider(model_path=os.getenv("LOCAL_MODEL_PATH"))
-    raise ValueError(f"DEFAULT_PROVIDER không hợp lệ: {provider}")
+    from main import get_provider as _get_provider
+    return _get_provider()
 
 
 def _check_turn(agent, turn):
