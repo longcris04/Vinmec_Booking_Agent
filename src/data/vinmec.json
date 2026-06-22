@@ -1,0 +1,55 @@
+{
+  "facilities": [
+    {"name": "Vinmec Times City", "address": "458 Minh Khai, Hai Bà Trưng, Hà Nội", "lat": 21.0049, "lon": 105.8665},
+    {"name": "Vinmec Central Park", "address": "208 Nguyễn Hữu Cảnh, Bình Thạnh, TP.HCM", "lat": 10.7943, "lon": 106.7215},
+    {"name": "Vinmec Đà Nẵng", "address": "30 Đường 2/9, Hải Châu, Đà Nẵng", "lat": 16.0411, "lon": 108.2230},
+    {"name": "Vinmec Nha Trang", "address": "Khu đô thị Phú Quý, Nha Trang, Khánh Hòa", "lat": 12.2388, "lon": 109.1820},
+    {"name": "Vinmec Hạ Long", "address": "10A Lê Thánh Tông, Hạ Long, Quảng Ninh", "lat": 20.9515, "lon": 107.0730},
+    {"name": "Vinmec Phú Quốc", "address": "Bãi Dài, Gành Dầu, Phú Quốc, Kiên Giang", "lat": 10.3180, "lon": 103.8600}
+  ],
+  "city_coords": {
+    "hà nội": [21.0285, 105.8542],
+    "hanoi": [21.0285, 105.8542],
+    "hồ chí minh": [10.7769, 106.7009],
+    "tphcm": [10.7769, 106.7009],
+    "hcm": [10.7769, 106.7009],
+    "sài gòn": [10.7769, 106.7009],
+    "đà nẵng": [16.0544, 108.2022],
+    "da nang": [16.0544, 108.2022],
+    "nha trang": [12.2388, 109.1967],
+    "hải phòng": [20.8449, 106.6881],
+    "hạ long": [20.9515, 107.0730],
+    "quảng ninh": [20.9515, 107.0730],
+    "phú quốc": [10.2899, 103.9840],
+    "cần thơ": [10.0452, 105.7469]
+  },
+  "doctor_schedule": {
+    "thần kinh": ["13:00 BS. Vũ Thị F"],
+    "tim mạch": ["09:00 BS. Nguyễn Văn A", "14:00 BS. Trần Thị B"],
+    "tiêu hóa": ["08:30 BS. Đỗ Văn G", "15:00 BS. Bùi Thị H"],
+    "răng hàm mặt": ["09:30 BS. Ngô Văn I"],
+    "tai mũi họng": ["10:00 BS. Đặng Thị K", "14:30 BS. Lý Văn L"],
+    "chấn thương chỉnh hình": ["08:00 BS. Phan Văn M"],
+    "truyền nhiễm": ["11:00 BS. Hồ Thị N"],
+    "ngoại": ["07:30 BS. Trương Văn O", "13:30 BS. Mai Thị P"],
+    "da liễu": ["10:30 BS. Lê Văn C"],
+    "nhi": ["08:00 BS. Phạm Thị D", "15:30 BS. Hoàng Văn E"]
+  },
+  "service_prices": {
+    "khám thần kinh": 450000,
+    "khám tim mạch": 500000,
+    "khám tiêu hóa": 400000,
+    "khám răng hàm mặt": 350000,
+    "khám tai mũi họng": 300000,
+    "khám chấn thương chỉnh hình": 450000,
+    "khám truyền nhiễm": 350000,
+    "khám ngoại": 400000,
+    "khám da liễu": 300000,
+    "khám nhi": 250000
+  },
+  "insurance_coverage": {
+    "vinmec care": 0.70,
+    "bảo việt": 0.50,
+    "không": 0.0
+  }
+}

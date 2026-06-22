@@ -1,0 +1,148 @@
+{
+  "facilities": [
+    {"name": "Vinmec Times City", "address": "458 Minh Khai, Vĩnh Tuy, Hai Bà Trưng, Hà Nội", "lat": 20.9956, "lon": 105.8668, "hotline": "115"},
+    {"name": "Vinmec Central Park", "address": "208 Nguyễn Hữu Cảnh, Bình Thạnh, TP.HCM", "lat": 10.7943, "lon": 106.7215, "hotline": "115"},
+    {"name": "Vinmec Đà Nẵng", "address": "30 Đường 2/9, Hải Châu, Đà Nẵng", "lat": 16.0411, "lon": 108.2230, "hotline": "115"},
+    {"name": "Vinmec Nha Trang", "address": "Khu đô thị Phú Quý, Nha Trang, Khánh Hòa", "lat": 12.2388, "lon": 109.1820, "hotline": "115"},
+    {"name": "Vinmec Hạ Long", "address": "10A Lê Thánh Tông, Hạ Long, Quảng Ninh", "lat": 20.9515, "lon": 107.0730, "hotline": "115"},
+    {"name": "Vinmec Phú Quốc", "address": "Bãi Dài, Gành Dầu, Phú Quốc, Kiên Giang", "lat": 10.3180, "lon": 103.8600, "hotline": "115"}
+  ],
+  "emergency": {
+    "national": "115",
+    "vinmec_hotline": "115"
+  },
+  "first_aid": {
+    "đau ngực": [
+      "Cho người bệnh ngồi/nửa nằm nghỉ, nới lỏng quần áo, giữ bình tĩnh.",
+      "Tuyệt đối không để người bệnh tự đi lại hay gắng sức.",
+      "Nếu đã được bác sĩ kê thuốc tim (vd nitroglycerin) thì dùng theo chỉ định.",
+      "Nếu người bệnh ngừng thở/ngừng tim và bạn biết CPR: ép tim ngay (100-120 lần/phút)."
+    ],
+    "đột quỵ": [
+      "Ghi nhớ CHÍNH XÁC thời điểm xuất hiện triệu chứng (rất quan trọng cho điều trị).",
+      "Đặt người bệnh nằm nghiêng an toàn, đầu hơi cao.",
+      "KHÔNG cho ăn hay uống bất cứ thứ gì.",
+      "Kiểm tra nhanh: méo mặt, yếu một bên tay, nói khó — gọi 115 ngay."
+    ],
+    "khó thở": [
+      "Cho người bệnh ngồi thẳng, nới lỏng cổ áo, mở cửa thoáng khí.",
+      "Trấn an, khuyến khích thở chậm và sâu.",
+      "Nếu hóc dị vật gây nghẹt thở: vỗ lưng 5 lần / ấn bụng (Heimlich) 5 lần."
+    ],
+    "chảy máu": [
+      "Ép trực tiếp lên vết thương bằng gạc/vải sạch.",
+      "Nâng cao vùng bị thương nếu có thể.",
+      "Giữ ép liên tục; nếu gạc thấm máu, đắp thêm lên trên, KHÔNG gỡ ra."
+    ],
+    "co giật": [
+      "Đặt người bệnh nằm nghiêng, dọn các vật cứng/nguy hiểm xung quanh.",
+      "KHÔNG giữ chặt người bệnh, KHÔNG nhét vật gì vào miệng.",
+      "Đỡ đầu bằng vật mềm, ghi nhớ thời gian cơn co giật kéo dài."
+    ],
+    "bất tỉnh": [
+      "Gọi to kiểm tra phản ứng, kiểm tra hơi thở.",
+      "Nếu còn thở: đặt nằm nghiêng an toàn, theo dõi liên tục.",
+      "Nếu ngừng thở và bạn biết CPR: ép tim ngay 100-120 lần/phút."
+    ],
+    "bỏng": [
+      "Làm mát vùng bỏng dưới vòi nước sạch 15-20 phút.",
+      "KHÔNG bôi kem đánh răng, nước mắm, đá lạnh trực tiếp.",
+      "Che vết bỏng bằng gạc sạch, KHÔNG làm vỡ bọng nước."
+    ],
+    "ngộ độc": [
+      "Giữ lại mẫu/bao bì chất nghi gây ngộ độc để báo bác sĩ.",
+      "KHÔNG tự gây nôn trừ khi được nhân viên y tế hướng dẫn.",
+      "Nếu bất tỉnh: đặt nằm nghiêng, theo dõi hơi thở."
+    ],
+    "chấn thương": [
+      "Cố định vùng nghi gãy xương, KHÔNG cố nắn chỉnh.",
+      "KHÔNG di chuyển người bệnh nếu nghi chấn thương cột sống/cổ.",
+      "Cầm máu nếu có vết thương hở."
+    ],
+    "chung": [
+      "Giữ bình tĩnh, đặt người bệnh ở tư thế thoải mái, an toàn.",
+      "Theo dõi hơi thở và ý thức của người bệnh.",
+      "Không cho ăn/uống nếu chưa rõ tình trạng; chờ nhân viên y tế."
+    ]
+  },
+  "first_aid_aliases": {
+    "tim": "đau ngực", "nhồi máu": "đau ngực", "thắt ngực": "đau ngực", "đau tim": "đau ngực",
+    "tai biến": "đột quỵ", "méo miệng": "đột quỵ", "yếu liệt": "đột quỵ", "liệt nửa người": "đột quỵ",
+    "nghẹt thở": "khó thở", "hóc": "khó thở", "sặc": "khó thở", "ngạt": "khó thở",
+    "máu": "chảy máu", "xuất huyết": "chảy máu",
+    "động kinh": "co giật", "giật": "co giật",
+    "ngất": "bất tỉnh", "xỉu": "bất tỉnh", "hôn mê": "bất tỉnh", "bất tỉnh": "bất tỉnh",
+    "phỏng": "bỏng", "cháy": "bỏng",
+    "trúng độc": "ngộ độc", "ngộ độc": "ngộ độc",
+    "gãy": "chấn thương", "tai nạn": "chấn thương", "va đập": "chấn thương", "té ngã": "chấn thương"
+  },
+  "city_coords": {
+    "hà nội": [21.0285, 105.8542],
+    "hanoi": [21.0285, 105.8542],
+    "hồ chí minh": [10.7769, 106.7009],
+    "tphcm": [10.7769, 106.7009],
+    "hcm": [10.7769, 106.7009],
+    "sài gòn": [10.7769, 106.7009],
+    "đà nẵng": [16.0544, 108.2022],
+    "da nang": [16.0544, 108.2022],
+    "nha trang": [12.2388, 109.1967],
+    "hải phòng": [20.8449, 106.6881],
+    "hạ long": [20.9515, 107.0730],
+    "quảng ninh": [20.9515, 107.0730],
+    "phú quốc": [10.2899, 103.9840],
+    "cần thơ": [10.0452, 105.7469]
+  },
+  "doctor_schedule": {
+    "nội tổng quát": ["Hôm nay 09:00 - BS. Nguyễn Văn A", "Hôm nay 14:00 - BS. Trần Thị B", "Hôm nay 17:00 - BS. Nguyễn Văn A", "Hôm nay 19:30 - BS. Trần Thị B", "Ngày mai 08:00 - BS. Nguyễn Văn A"],
+    "thần kinh": ["Ngày mai 13:00 - BS. Vũ Thị F"],
+    "tim mạch": ["Hôm nay 09:00 - BS. Nguyễn Văn A", "Hôm nay 14:00 - BS. Trần Thị B"],
+    "tiêu hóa": ["Hôm nay 08:30 - BS. Đỗ Văn G", "Hôm nay 15:00 - BS. Bùi Thị H"],
+    "răng hàm mặt": ["Hôm nay 09:30 - BS. Ngô Văn I"],
+    "tai mũi họng": ["Hôm nay 10:00 - BS. Đặng Thị K", "Hôm nay 14:30 - BS. Lý Văn L"],
+    "chấn thương chỉnh hình": ["Ngày mai 08:00 - BS. Phan Văn M"],
+    "truyền nhiễm": ["Hôm nay 11:00 - BS. Hồ Thị N"],
+    "ngoại": ["Hôm nay 07:30 - BS. Trương Văn O", "Ngày mai 13:30 - BS. Mai Thị P"],
+    "da liễu": ["Hôm nay 10:30 - BS. Lê Văn C"],
+    "nhi": ["Hôm nay 08:00 - BS. Phạm Thị D", "Hôm nay 15:30 - BS. Hoàng Văn E"]
+  },
+  "service_prices": {
+    "khám nội tổng quát": 350000,
+    "khám thần kinh": 450000,
+    "khám tim mạch": 500000,
+    "khám tiêu hóa": 400000,
+    "khám răng hàm mặt": 350000,
+    "khám tai mũi họng": 300000,
+    "khám chấn thương chỉnh hình": 450000,
+    "khám truyền nhiễm": 350000,
+    "khám ngoại": 400000,
+    "khám da liễu": 300000,
+    "khám nhi": 250000
+  },
+  "insurance_coverage": {
+    "vinmec care": 0.70,
+    "bảo việt": 0.50,
+    "không": 0.0
+  },
+  "specialty_aliases": {
+    "nội khoa": "nội tổng quát",
+    "nội": "nội tổng quát",
+    "đa khoa": "nội tổng quát",
+    "khám tổng quát": "nội tổng quát",
+    "tổng quát": "nội tổng quát",
+    "nội tổng hợp": "nội tổng quát",
+    "cơ xương khớp": "chấn thương chỉnh hình",
+    "xương khớp": "chấn thương chỉnh hình",
+    "chỉnh hình": "chấn thương chỉnh hình",
+    "chấn thương": "chấn thương chỉnh hình",
+    "dạ dày": "tiêu hóa",
+    "tiêu hoá": "tiêu hóa",
+    "tmh": "tai mũi họng",
+    "rhm": "răng hàm mặt",
+    "nha khoa": "răng hàm mặt",
+    "tim": "tim mạch",
+    "tim mạch học": "tim mạch",
+    "thần kinh học": "thần kinh",
+    "nhi khoa": "nhi",
+    "ngoại khoa": "ngoại"
+  }
+}
